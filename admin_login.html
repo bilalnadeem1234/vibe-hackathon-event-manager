@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login — NTU Event Organizer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-indigo-50 flex items-center justify-center p-6">
+  <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-indigo-600 rounded-md flex items-center justify-center text-white font-bold">NT</div>
+      <div>
+        <h1 class="text-xl font-semibold text-slate-900">Admin Portal</h1>
+        <p class="text-sm text-slate-600">Sign in with your administrator credentials</p>
+      </div>
+    </div>
+
+    <form id="adminLoginForm" class="space-y-4" autocomplete="off">
+      <div>
+        <label class="block text-sm text-slate-700">Admin Secure ID</label>
+        <input id="adminUsername" name="username" required class="mt-1 block w-full border border-slate-200 rounded-md px-3 py-2" />
+      </div>
+
+      <div>
+        <label class="block text-sm text-slate-700">Password</label>
+        <input id="adminPassword" name="password" type="password" required class="mt-1 block w-full border border-slate-200 rounded-md px-3 py-2" />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Sign in</button>
+      
+      </div>
+
+      <p id="adminMsg" class="text-sm mt-2 text-red-600"></p>
+
+      <p class="mt-4 text-xs text-slate-500">Security Note: This portal is for authorized personnel only.</p>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('adminLoginForm');
+    const msg = document.getElementById('adminMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      const username = document.getElementById('adminUsername').value.trim();
+      const password = document.getElementById('adminPassword').value;
+
+      try {
+        const res = await fetch('/api/admin_login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          // successful admin login -> redirect to admin dashboard
+          window.location.href = data.redirect || '/admin_dashboard';
+        } else {
+          msg.textContent = data.message || 'Invalid credentials';
+        }
+      } catch (err) {
+        msg.textContent = 'Network error';
+      }
+    });
+  </script>
+</body>
+</html>

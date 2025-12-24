@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "title": "NTU Tech Innovation Meetup 2025",
+        "description": "An interactive tech meetup bringing together NTU students to explore modern web development, AI tools, and startup culture. The event includes expert talks, live demos, and networking opportunities for aspiring developers and entrepreneurs.",
+        "date": "2025-12-27T09:57",
+        "category": "Tech",
+        "organizer": "admin",
+        "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475"
+    },
+    {
+        "id": 2,
+        "title": "VIBE NTU Hackathon 2025",
+        "description": "A 24-hour competitive hackathon where NTU students collaborate to design and build innovative tech solutions. Participants will work in teams, solve real-world problems, and present their projects to a panel of judges. The event promotes creativity, teamwork, and hands-on learning.",
+        "date": "2025-12-31T07:59",
+        "category": "Tech",
+        "organizer": "admin",
+        "image_url": "https://images.unsplash.com/photo-1531482615713-2afd69097998"
+    },
+    {
+        "id": 3,
+        "title": "NTU Inter-Department Basketball Tournament",
+        "description": "An exciting inter-department football tournament bringing together teams from across NTU. The event promotes sportsmanship, teamwork, and a healthy competitive spirit among students, with trophies awarded to top teams.",
+        "date": "2025-12-27T12:00",
+        "category": "Sports",
+        "organizer": "admin",
+        "image_url": "https://images.unsplash.com/photo-1521412644187-c49fa049e84d"
+    },
+    {
+        "id": 4,
+        "title": "Python Web Development Workshop",
+        "description": "A hands-on workshop designed to introduce students to Python and Flask web development. Participants will learn backend fundamentals, build a mini project, and understand how real-world web applications are structured and deployed.",
+        "date": "2026-01-14T09:00",
+        "category": "Workshop",
+        "organizer": "admin",
+        "image_url": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
+    },
+    {
+        "id": 5,
+        "title": "Web Development Bootcamp",
+        "description": "A hands-on web development workshop covering HTML, CSS, JavaScript, and Flask basics. Designed for beginners who want to start building real-world web applications.",
+        "date": "2025-12-01T08:31",
+        "category": "Tech",
+        "organizer": "admin",
+        "image_url": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2"
+    }
+]

@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Student Dashboard — VIBE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-800">
+
+<!-- ================= HEADER / NAVBAR ================= -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo + Brand -->
+      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-all">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" 
+             alt="VIBE Logo" 
+             class="w-12 h-12 rounded-lg object-cover shadow-md" />
+        <div>
+          <div class="font-bold text-lg text-indigo-600">VIBE</div>
+          <div class="text-xs text-slate-500">My Dashboard</div>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="/" class="text-slate-600 hover:text-slate-900 font-medium">Back to Events</a>
+      </nav>
+
+      <!-- Desktop Buttons -->
+      <div class="hidden md:flex items-center gap-3">
+        <span id="welcomeText" class="text-sm font-medium text-slate-700">Welcome, Student</span>
+        <button id="logoutBtn" class="bg-slate-200 text-slate-800 px-5 py-2.5 rounded-lg hover:bg-slate-300 transition-all font-medium">
+          Logout
+        </button>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" class="md:hidden p-2 hover:bg-slate-100 rounded-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobileMenu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg flex-col border-t z-40">
+      <a href="/" class="px-4 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium border-b">Back to Events</a>
+      <span id="welcomeTextMobile" class="px-4 py-3 text-sm font-medium text-slate-700">Welcome, Student</span>
+      <button id="logoutBtnMobile" class="mx-4 my-3 bg-slate-200 text-slate-800 px-4 py-2 rounded-lg hover:bg-slate-300 transition-all font-medium w-auto">
+        Logout
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+  <!-- PAGE HEADER -->
+  <div class="mb-12">
+    <h1 class="text-4xl font-extrabold text-slate-900 mb-3">My Events Dashboard</h1>
+    <p class="text-lg text-slate-600">Track your interested events and attendance below</p>
+  </div>
+
+  <!-- FILTERS & SEARCH -->
+  <div class="grid md:grid-cols-4 gap-4 mb-12 bg-white p-6 rounded-xl shadow-sm">
+    <!-- Search -->
+    <div class="md:col-span-2">
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Search Events</label>
+      <input id="searchInput" 
+        type="text" 
+        placeholder="Search by title or description..."
+        class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" />
+    </div>
+
+    <!-- Category Filter -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+      <select id="categoryFilter" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+        <option value="All">All Categories</option>
+        <option value="Tech">Tech</option>
+        <option value="Sports">Sports</option>
+        <option value="Workshop">Workshop</option>
+      </select>
+    </div>
+
+    <!-- View Filter -->
+    <div>
+      <label class="block text-sm font-semibold text-slate-700 mb-2">View</label>
+      <select id="viewFilter" class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+        <option value="All">All Events</option>
+        <option value="Going">Going</option>
+        <option value="Interested">Interested</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- EVENTS SECTIONS -->
+  <div class="space-y-12">
+    
+    <!-- UPCOMING EVENTS -->
+    <section>
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-slate-900">📅 Upcoming Events</h2>
+        <span id="upcomingCount" class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold">0</span>
+      </div>
+      <div id="upcomingEvents" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="col-span-full text-center py-12 text-slate-500">
+          <p class="text-lg">No upcoming events found.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAST EVENTS -->
+    <section>
+      <div class="mb-6 flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-slate-900">🕘 Past Events</h2>
+        <span id="pastCount" class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-sm font-semibold">0</span>
+      </div>
+      <div id="pastEvents" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="col-span-full text-center py-12 text-slate-500">
+          <p class="text-lg">No past events found.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+  // DOM Elements
+  const logoutBtn = document.getElementById('logoutBtn');
+  const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const welcomeText = document.getElementById('welcomeText');
+  const welcomeTextMobile = document.getElementById('welcomeTextMobile');
+  const searchInput = document.getElementById('searchInput');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const viewFilter = document.getElementById('viewFilter');
+
+  // Get username from localStorage
+  const username = localStorage.getItem('username') || 'Student';
+  if (welcomeText) welcomeText.textContent = `Welcome, ${username}`;
+  if (welcomeTextMobile) welcomeTextMobile.textContent = `Welcome, ${username}`;
+
+  // Mobile Menu Toggle
+  mobileMenuBtn?.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Logout handlers
+  const handleLogout = () => {
+    localStorage.clear();
+    fetch('/api/logout', { method: 'POST' });
+    location.href = '/';
+  };
+
+  logoutBtn?.addEventListener('click', handleLogout);
+  logoutBtnMobile?.addEventListener('click', handleLogout);
+
+  // Event fetching and rendering
+  let allEvents = [];
+  let userGoing = new Set();
+  let userInterested = new Set();
+
+  async function loadEvents() {
+    try {
+      const res = await fetch('/api/events');
+      allEvents = await res.json();
+      
+      // Load user attendance if logged in
+      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      if (loggedIn) {
+        try {
+          const attendRes = await fetch('/api/attendance');
+          if (attendRes.ok) {
+            const attending = await attendRes.json();
+            userGoing = new Set((attending || []).map(String));
+          }
+        } catch (err) {
+          console.warn('Could not load attendance data', err);
+        }
+      }
+      
+      renderEvents();
+    } catch (err) {
+      console.error('Failed to load events:', err);
+    }
+  }
+
+  function renderEvents() {
+    const upcomingContainer = document.getElementById('upcomingEvents');
+    const pastContainer = document.getElementById('pastEvents');
+    const now = new Date();
+
+    // Separate and filter events
+    const filterValue = viewFilter.value;
+    const categoryValue = categoryFilter.value;
+    const searchValue = searchInput.value.toLowerCase();
+
+    const filtered = allEvents.filter(ev => {
+      // Search filter
+      if (searchValue && !ev.title.toLowerCase().includes(searchValue) && !ev.description.toLowerCase().includes(searchValue)) {
+        return false;
+      }
+      
+      // Category filter
+      if (categoryValue !== 'All' && ev.category !== categoryValue) {
+        return false;
+      }
+
+      // View filter
+      if (filterValue === 'Going' && !userGoing.has(String(ev.id))) {
+        return false;
+      }
+      if (filterValue === 'Interested' && !userInterested.has(String(ev.id))) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const upcoming = filtered.filter(ev => new Date(ev.date) >= now).sort((a, b) => new Date(a.date) - new Date(b.date));
+    const past = filtered.filter(ev => new Date(ev.date) < now).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    // Render upcoming
+    if (upcoming.length === 0) {
+      upcomingContainer.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><p class="text-lg">No upcoming events found.</p></div>';
+    } else {
+      upcomingContainer.innerHTML = upcoming.map(ev => createEventCard(ev)).join('');
+    }
+
+    // Render past
+    if (past.length === 0) {
+      pastContainer.innerHTML = '<div class="col-span-full text-center py-12 text-slate-500"><p class="text-lg">No past events found.</p></div>';
+    } else {
+      pastContainer.innerHTML = past.map(ev => createEventCard(ev, true)).join('');
+    }
+
+    // Update counts
+    document.getElementById('upcomingCount').textContent = upcoming.length;
+    document.getElementById('pastCount').textContent = past.length;
+
+    // Attach event listeners to buttons
+    document.querySelectorAll('.going-btn').forEach(btn => {
+      btn.addEventListener('click', handleGoingClick);
+    });
+    document.querySelectorAll('.interested-btn').forEach(btn => {
+      btn.addEventListener('click', handleInterestedClick);
+    });
+  }
+
+  function createEventCard(ev, isPast = false) {
+    const isGoing = userGoing.has(String(ev.id));
+    const eventDate = new Date(ev.date);
+    const formattedDate = eventDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+
+    return `
+      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-5 flex flex-col ${isPast ? 'bg-slate-50 opacity-75' : ''}">
+        <div class="mb-3">
+          <h3 class="text-lg font-bold text-slate-900">${escapeHtml(ev.title)}</h3>
+          <p class="text-xs text-slate-500 mt-1">${escapeHtml(ev.organizer)} • ${escapeHtml(ev.category)}</p>
+        </div>
+        
+        <p class="text-sm text-slate-600 mb-4 line-clamp-3">${escapeHtml(ev.description)}</p>
+        
+        <div class="mt-auto pt-4 border-t border-slate-200 flex justify-between items-center">
+          <div class="text-xs text-slate-500">${formattedDate}</div>
+          <div class="flex gap-2">
+            <button class="going-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${isGoing ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}" data-event="${ev.id}">
+              ${isGoing ? '✓ Going' : 'Going'}
+            </button>
+            <button class="interested-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-all bg-slate-200 text-slate-700 hover:bg-slate-300" data-event="${ev.id}">
+              ♥ Interested
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  async function handleGoingClick(e) {
+    const eventId = parseInt(e.target.dataset.event);
+    const isCurrentlyGoing = userGoing.has(String(eventId));
+    const newState = !isCurrentlyGoing;
+
+    try {
+      const res = await fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ event_id: eventId, going: newState })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        userGoing = new Set((data.events || []).map(String));
+        renderEvents();
+      }
+    } catch (err) {
+      alert('Failed to update attendance');
+    }
+  }
+
+  function handleInterestedClick(e) {
+    const eventId = parseInt(e.target.dataset.event);
+    const key = `interested_event_${eventId}`;
+    
+    if (userInterested.has(String(eventId))) {
+      userInterested.delete(String(eventId));
+      localStorage.removeItem(key);
+    } else {
+      userInterested.add(String(eventId));
+      localStorage.setItem(key, '1');
+    }
+    renderEvents();
+  }
+
+  // Event Listeners
+  searchInput?.addEventListener('input', renderEvents);
+  categoryFilter?.addEventListener('change', renderEvents);
+  viewFilter?.addEventListener('change', renderEvents);
+
+  // Initialize
+  loadEvents();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NTU Events — VIBE</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    #protected-content { display: none; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-slate-50 text-slate-800">
+
+<!-- ================= HEADER / NAVBAR ================= -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo + Brand -->
+      <a href="/" class="flex items-center gap-3 hover:opacity-80 transition-all">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" 
+             alt="VIBE Logo" 
+             class="w-12 h-12 rounded-lg object-cover shadow-md" />
+        <div>
+          <div class="font-bold text-lg text-indigo-600">VIBE</div>
+          <div class="text-xs text-slate-500">NTU Events</div>
+        </div>
+      </a>
+      <!-- Desktop Navigation -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="/" class="text-slate-600 hover:text-slate-900 font-medium">Home</a>
+        <a href="#explore" class="text-slate-600 hover:text-slate-900 font-medium">Events</a>
+      </nav>
+
+      <!-- Desktop Buttons -->
+      <div class="hidden md:flex items-center gap-3">
+        <button id="userAuthBtn" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition-all font-medium shadow-sm">
+          Student Login
+        </button>
+        <a href="/admin_login" class="bg-slate-800 text-white px-5 py-2.5 rounded-lg hover:bg-slate-900 transition-all font-medium shadow-sm">
+          Admin Portal
+        </a>
+        <button id="logoutBtn" class="hidden bg-slate-200 text-slate-800 px-5 py-2.5 rounded-lg hover:bg-slate-300 transition-all font-medium">
+          Logout
+        </button>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button id="mobileMenuBtn" class="md:hidden p-2 hover:bg-slate-100 rounded-lg">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobileMenu" class="hidden md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg flex-col border-t z-40">
+      <a href="/" class="px-4 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium border-b">Home</a>
+      <a href="#explore" class="px-4 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium border-b">Events</a>
+      <button id="userAuthBtnMobile" class="mx-4 my-3 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-all font-medium w-auto">
+        Student Login
+      </button>
+      <a href="/admin_login" class="mx-4 mb-3 bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-900 transition-all font-medium text-center block">
+        Admin Portal
+      </a>
+      <button id="logoutBtnMobile" class="hidden mx-4 mb-3 bg-slate-200 text-slate-800 px-4 py-2 rounded-lg hover:bg-slate-300 transition-all font-medium w-auto">
+        Logout
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+<section id="hero" class="bg-gradient-to-br from-indigo-600 via-indigo-500 to-purple-600 text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+      Welcome to NTU Events
+    </h1>
+    <p class="text-lg sm:text-xl text-indigo-100 max-w-2xl mx-auto mb-10">
+      Discover and join amazing tech talks, workshops, sports events, and student activities happening across campus. Connect with your community!
+    </p>
+
+    <div class="flex flex-col sm:flex-row justify-center gap-4">
+      <button id="ctaLogin" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-bold hover:bg-slate-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+        Login to Continue
+      </button>
+      <a href="/register" class="bg-indigo-700 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-800 transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+        Create Account
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROTECTED CONTENT (Hidden by default, shown on login) ================= -->
+<div id="protected-content" class="min-h-screen bg-slate-50 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" id="explore">
+    
+    <!-- FILTERS SECTION -->
+    <div class="mb-12">
+      <h2 class="text-3xl font-bold text-slate-900 mb-8">Explore Events</h2>
+      
+      <div class="grid md:grid-cols-4 gap-6 bg-white p-6 rounded-xl shadow-sm">
+        <!-- Category Filters -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-700 mb-3">Category</label>
+          <div class="flex flex-wrap gap-2">
+            <button data-filter="All" class="filter-btn px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium transition-all hover:shadow-md">All</button>
+            <button data-filter="Tech" class="filter-btn px-4 py-2 rounded-lg bg-slate-200 text-slate-800 font-medium hover:bg-slate-300 transition-all">Tech</button>
+            <button data-filter="Sports" class="filter-btn px-4 py-2 rounded-lg bg-slate-200 text-slate-800 font-medium hover:bg-slate-300 transition-all">Sports</button>
+            <button data-filter="Workshop" class="filter-btn px-4 py-2 rounded-lg bg-slate-200 text-slate-800 font-medium hover:bg-slate-300 transition-all">Workshop</button>
+          </div>
+        </div>
+
+        <!-- Organizer Filter -->
+        <div class="md:col-span-2">
+          <label class="block text-sm font-semibold text-slate-700 mb-3">Organizer</label>
+          <select id="organizerFilter" class="w-full border border-slate-300 rounded-lg px-4 py-2 text-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+            <option value="All">All Organizers</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- EVENTS GRID -->
+    <div id="eventsGrid" class="space-y-12"></div>
+  </div>
+</div>
+
+<!-- ================= LOGIN MODAL ================= -->
+<div id="loginModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-8 transform transition-all">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-slate-900">Student Login</h2>
+      <button id="cancelLogin" class="text-slate-500 hover:text-slate-700">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Username</label>
+        <input id="username" 
+          placeholder="Enter your username" 
+          required
+          class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+        <input id="password" 
+          type="password" 
+          placeholder="Enter your password" 
+          required
+          class="w-full border border-slate-300 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all" />
+      </div>
+
+      <div class="flex justify-end gap-3 pt-4">
+        <button type="button" id="cancelLoginBtn" class="px-4 py-2 text-slate-700 bg-slate-200 rounded-lg hover:bg-slate-300 transition-all font-medium">
+          Cancel
+        </button>
+        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all font-bold shadow-md hover:shadow-lg">
+          Login
+        </button>
+      </div>
+    </form>
+
+    <p id="loginMsg" class="mt-4 text-sm text-red-600 text-center"></p>
+
+    <div class="mt-6 text-center text-sm text-slate-600">
+      Don't have an account? <a href="/register" class="text-indigo-600 font-semibold hover:underline">Create one here</a>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script>
+  // DOM Elements
+  const userAuthBtn = document.getElementById('userAuthBtn');
+  const userAuthBtnMobile = document.getElementById('userAuthBtnMobile');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+  const loginModal = document.getElementById('loginModal');
+  const hero = document.getElementById('hero');
+  const protectedContent = document.getElementById('protected-content');
+  const cancelLogin = document.getElementById('cancelLogin');
+  const cancelLoginBtn = document.getElementById('cancelLoginBtn');
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  // Mobile Menu Toggle
+  mobileMenuBtn?.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Login Modal Functions
+  function openLogin() {
+    loginModal.classList.remove('hidden');
+    loginModal.classList.add('flex');
+    document.getElementById('username').focus();
+  }
+
+  function closeLogin() {
+    loginModal.classList.add('hidden');
+    loginModal.classList.remove('flex');
+  }
+
+  // Update UI based on login state
+  function updateUI() {
+    const logged = localStorage.getItem('isLoggedIn') === 'true';
+    if (logged) {
+      hero.style.display = 'none';
+      protectedContent.style.display = '';
+      userAuthBtn?.classList.add('hidden');
+      userAuthBtnMobile?.classList.add('hidden');
+      logoutBtn?.classList.remove('hidden');
+      logoutBtnMobile?.classList.remove('hidden');
+      if (typeof loadEvents === 'function') {
+        loadEvents();
+      }
+    } else {
+      hero.style.display = '';
+      protectedContent.style.display = 'none';
+      userAuthBtn?.classList.remove('hidden');
+      userAuthBtnMobile?.classList.remove('hidden');
+      logoutBtn?.classList.add('hidden');
+      logoutBtnMobile?.classList.add('hidden');
+    }
+  }
+
+  // Event Listeners
+  userAuthBtn?.addEventListener('click', openLogin);
+  userAuthBtnMobile?.addEventListener('click', () => {
+    mobileMenu.classList.add('hidden');
+    openLogin();
+  });
+  
+  document.getElementById('ctaLogin')?.addEventListener('click', openLogin);
+  cancelLogin?.addEventListener('click', closeLogin);
+  cancelLoginBtn?.addEventListener('click', closeLogin);
+
+  // Login Form Submission
+  document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
+    const loginMsg = document.getElementById('loginMsg');
+    
+    loginMsg.textContent = 'Signing in...';
+    loginMsg.className = 'mt-4 text-sm text-blue-600 text-center';
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: username.value,
+          password: password.value
+        })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        localStorage.setItem('isLoggedIn', 'true');
+        if (data.role) {
+          localStorage.setItem('role', data.role);
+        }
+        window.location.href = '/dashboard';
+      } else {
+        loginMsg.textContent = data.message || 'Invalid credentials';
+        loginMsg.className = 'mt-4 text-sm text-red-600 text-center';
+      }
+    } catch (err) {
+      loginMsg.textContent = 'Login failed. Please try again.';
+      loginMsg.className = 'mt-4 text-sm text-red-600 text-center';
+    }
+  });
+
+  // Logout
+  logoutBtn?.addEventListener('click', () => {
+    localStorage.clear();
+    fetch('/api/logout', { method: 'POST' });
+    location.reload();
+  });
+
+  logoutBtnMobile?.addEventListener('click', () => {
+    localStorage.clear();
+    fetch('/api/logout', { method: 'POST' });
+    location.reload();
+  });
+
+  // Close modal when clicking outside
+  loginModal?.addEventListener('click', (e) => {
+    if (e.target === loginModal) {
+      closeLogin();
+    }
+  });
+
+  // Initialize
+  updateUI();
+</script>
+
+<script src="/static/js/events.js"></script>
+</body>
+</html>
